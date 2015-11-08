@@ -1,0 +1,48 @@
+<!-- Code for the 'List of Latest Projects from Greensboro Building Permits' on the OpenDataSoft brigade open data portal.
+
+    Code is HTML and uses several OpenDataSoft Angular JS Widgets
+
+    People will need an account on the Greensboro OpenDataSoft brigade open data portal:
+        https://codeforgreensboro.opendatasoft.com
+
+        Contact the brigade captains at Code for Greensboro for an account
+            Nick Jones <nick@codeforgreensboro.org>
+            Anita Cafiero <anita@codeforgreensboro.org>
+            Jason Marshall <jason.marshall@greensboro-nc.gov>
+
+    Users will need Administrator access control "The user may create and edit content pages on the domain" to be able to edit the page and to create other pages.
+
+    Find page at https://codeforgreensboro.opendatasoft.com/page/bi_activity
+
+Source information for OpenDataSoft open source Angular JS Widgets:
+    https://opendatasoft.github.io/ods-widgets/docs/#/api
+
+On-line documentation for OpenDataSoft functionality:
+    http://docs.opendatasoft.com/
+
+Contact at OpenDataSoft for any additional questions about the OpenDataSoft brigade open data portal:
+    Ian Henshaw <ian.henshaw@opendatasoft.com>
+
+CSS code for page
+    body { 
+        background: #283944; 
+    }
+    .search {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 10px;
+    }
+
+-->
+<h1>
+    List of Latest Projects from Greensboro Building Permits      
+</h1>
+
+<ods-dataset-context context="buildinginspectiongso"
+                         buildinginspectiongso-domain="codeforgreensboro.opendatasoft.com"
+                         buildinginspectiongso-dataset="building_inspection_gso">
+        <ods-table
+               context="buildinginspectiongso"
+               displayed-fields="issueddate,description,address">
+        </ods-table>
+</ods-dataset-context>
