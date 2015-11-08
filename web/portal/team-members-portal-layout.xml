@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Concursive CityOAC Configuration file
+  version:    1
+  date:       20151107
+  author:     Code for Greensboro #Civicon15 - Team DIW Greensboro
+-->
+<module>
+  <navigation>
+    <!-- List -->
+    <page name="list: places">
+      <row>
+        <column width="auto" class="medium-8 main">
+          <portlet name="TeamMembersPortlet" class="team-list-">
+            <showIfEmpty>true</showIfEmpty>
+          </portlet>
+        </column>
+        <column class="medium-4 ">
+          <portlet name="ProjectActionsPortlet">
+            <style>links</style>
+            <urls>
+              <value><![CDATA[
+                <content>Become a Fan</content>
+                <title>Join ${project.title:xml} as a fan</title>
+                <icon>thumbs-up</icon>
+                <class>button expand</class>
+                <href>/ProjectManagementTeam.do?command=ConfirmJoin&amp;pid=${project.id}&amp;type=fan</href>
+                <class>button expand</class>
+                <rel>shadowbox;width=600</rel>
+                <rule>userCanJoin</rule>]]>
+              </value>
+              <value><![CDATA[
+                <content>Become a Fan</content>
+                <title>Request to join ${project.title:xml} as a member</title>
+                <icon>thumbs-up</icon>
+                <class>button expand</class>
+                <href>/ProjectManagementTeam.do?command=ConfirmAskToBecomeMember&amp;pid=${project.id}</href>
+                <rel>shadowbox;width=600</rel>
+                <rule>userCanRequestToJoin</rule>]]>
+              </value>
+              <value><![CDATA[
+                <content>Send Email to Members</content>
+                <title>Send Email to Members</title>
+                <icon>envelope</icon>
+                <class>button expand</class>
+                <href>/send/${project.uniqueId}/members</href>
+                <permission>project-team-email</permission>
+                <rule>hasTeamMembers</rule>
+                ]]>
+              </value>
+              <value><![CDATA[
+                <content>Invite Others</content>
+                <title>Invite Others</title>
+                <icon>plus</icon>
+                <class>button expand</class>
+                <href>/show/${project.uniqueId}/app/add_members</href>
+                <rel-off>shadowbox;width=600</rel-off>
+                <permission>project-team-edit</permission>
+                ]]>
+              </value>
+            </urls>
+          </portlet>
+          <portlet name="EmailUpdatesPortlet" class="panel radius callout" viewer="summary" />
+          <portlet name="MemberProfilePortlet" class="panel radius info" viewer="summary" />
+        </column>
+      </row>
+    </page>
+  </navigation>
+</module>

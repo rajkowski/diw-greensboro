@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Concursive CityOAC Configuration file
+  version:    1
+  date:       20151107
+  author:     Code for Greensboro #Civicon15 - Team DIW Greensboro
+-->
+<module>
+  <header>
+    <page name="profile header: contractors">
+      <row id="ccp-profile-header-container" type="subheader">
+        <column>
+          <row id="ccp-profile-header">
+            <column>
+              <row class="row">
+                <column class="medium-3 columns">
+                  <portlet name="ProfileImagePortlet" class="profileImage">
+                    <message />
+                  </portlet>
+                </column>
+                <column class="medium-5 columns">
+                  <portlet name="ProfileDetailsPortlet" viewer="title">
+                    <showAddress>false</showAddress>
+                    <showCategory>true</showCategory>
+                    <categoryURL>/contractors.shtml?category=${category}&amp;subcategory=${subcategory}</categoryURL>
+                  </portlet>
+                  <portlet name="ProfileDetailsPortlet" viewer="rating" />
+                </column>
+                <column class="medium-4 columns">
+                  <row>
+                    <column class="small-12 columns">
+                      <!-- badge icons -->
+                      <portlet name="ProfileDetailsPortlet" viewer="badges" class="medium-text-right" />
+                    </column>
+                  </row>
+                  <row>
+                    <column class="small-12 columns">
+                      <!-- social media icons-->
+                      <portlet name="ProfileDetailsPortlet" viewer="social" class="medium-text-right" />
+                    </column>
+                  </row>
+                  <row>
+                    <column class="small-12 columns">
+                      <portlet name="ProjectActionsPortlet">
+                        <!--<style>links</style>-->
+                        <style>list</style>
+                        <listClass>ccp-eventlist-simple</listClass>
+                        <urls>
+                          <value>
+                            <![CDATA[<content>Approve This Listing</content>
+                            <title>Approve ${project.title:xml}</title>
+                            <icon>check</icon>
+                            <!--<class>button small success radius expand</class>-->
+                            <href>/show/${project.uniqueId}/app/approve_listing</href>
+                            <rel>shadowbox;width=550</rel>
+                            <projectCondition>!approved</projectCondition>
+                            <rule>isAdmin</rule>]]>
+                          </value>
+                          <value>
+                            <![CDATA[<content>Claim This Listing</content>
+                            <title>Claim ownership of ${project.title:xml} listing</title>
+                            <icon>key</icon>
+                            <!--<class>button small radius expand</class>-->
+                            <href>/show/${project.uniqueId}/app/claim</href>
+                            <rel>shadowbox;width=600</rel>
+                            <rule>canClaim</rule>]]>
+                          </value>
+                          <value>
+                            <![CDATA[<content>Send Email to Members</content>
+                            <title>Send Email to Members</title>
+                            <icon>envelope</icon>
+                            <!--<class>button small secondary radius expand</class>-->
+                            <href>/send/${project.uniqueId}/members</href>
+                            <permission>project-team-email</permission>]]>
+                          </value>
+                          <value>
+                            <![CDATA[<content>Archive This Listing</content>
+                            <title>Archive ${project.title:xml}</title>
+                            <icon>archive</icon>
+                            <!--<class>button small alert radius expand</class>-->
+                            <href>/show/${project.uniqueId}/app/close_listing</href>
+                            <rel>shadowbox;width=550</rel>
+                            <rule>isAdmin,!closed</rule>]]>
+                          </value>
+                        </urls>
+                        <portlet-events>
+                          <generates-data>showIfEmptyMenu</generates-data>
+                        </portlet-events>
+                      </portlet>
+                      <portlet name="ContentPortlet">
+                        <content><![CDATA[&nbsp;]]></content>
+                        <portlet-events>
+                          <consumes-data>showIfEmptyMenu</consumes-data>
+                        </portlet-events>
+                      </portlet>
+                      <portlet name="ProfileDetailsPortlet" viewer="admin" />
+                    </column>
+                  </row>
+                </column>
+              </row>
+            </column>
+          </row>
+          <row id="ccp-profile-menu">
+            <column>
+              <row class="row">
+                <column class="medium-12 columns">
+                  <portlet name="ProfileTabsPortlet">
+                    <type>sub nav</type>
+                  </portlet>
+                </column>
+              </row>
+            </column>
+          </row>
+        </column>
+      </row>
+    </page>
+  </header>
+</module>

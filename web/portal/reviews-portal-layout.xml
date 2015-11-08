@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Concursive CityOAC Configuration file
+  version:    1
+  date:       20151107
+  author:     Code for Greensboro #Civicon15 - Team DIW Greensboro
+-->
+<module>
+  <navigation>
+    <!-- Reviews -->
+    <page name="list: people">
+      <row>
+        <column class="medium-8">
+          <portlet name="RecentProjectReviewsPortlet">
+            <!--<title>Recent Reviews</title>-->
+            <!--<icon></icon>-->
+            <view>verbose</view>
+            <showProjectTitle>true</showProjectTitle>
+            <showProfileImage>true</showProfileImage>
+            <showIfEmpty>true</showIfEmpty>
+            <emptyMessage>This user has not written any reviews yet.</emptyMessage>
+            <!--<limit>5</limit>-->
+          </portlet>
+        </column>
+      </row>
+    </page>
+  </navigation>
+</module>

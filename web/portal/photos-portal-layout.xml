@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Concursive CityOAC Configuration file
+  version:    1
+  date:       20151107
+  author:     Code for Greensboro #Civicon15 - Team DIW Greensboro
+-->
+<module>
+  <navigation>
+    <!-- Photos -->
+    <page name="list: people">
+      <row>
+        <column class="medium-12">
+          <portlet name="RecentPhotosListPortlet">
+            <showIfEmpty>true</showIfEmpty>
+            <emptyMessage>This user has not shared any photos yet.</emptyMessage>
+            <showUserCreatedPhotos>true</showUserCreatedPhotos>
+            <showProjectTitle>true</showProjectTitle>
+            <listClass>small-block-grid-3 medium-block-grid-4</listClass>
+          </portlet>
+        </column>
+      </row>
+    </page>
+  </navigation>
+</module>

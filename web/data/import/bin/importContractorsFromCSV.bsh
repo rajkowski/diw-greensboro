@@ -1,0 +1,683 @@
+#!/bin/sh                                                                                
+//bin/true; exec java -classpath .:lib/bsh-2.1.8.jar:lib/concursive-commons-20120922.jar:lib/commons-logging-1.1.1.jar:lib/log4j-1.2.15.jar:lib/opencsv-1.8.jar bsh.Interpreter "$0" "$@"
+
+/*
+ * Concursive CityOAC import script
+ * version:    1
+ * date:       20151108
+ * author:     Code for Greensboro #Civicon15 - Team DIW Greensboro
+ *
+ * This script imports CSV profile data into the target website.
+ *  - The contractor name is imported
+ *  - When available other fields like latitude/longitude/description/category
+ *  - Duplicate names are not imported
+ *  - Contractor categories are created on-the-fly
+ *
+ * For testing, specify an offset, like 0 and a limit of records to import, like 1
+ *
+ * A CSV file is required, for example:
+ *  https://codeforgreensboro.opendatasoft.com/explore/dataset/building_inspection_gso/?tab=table&sort=issueddate
+ *
+ * Project libraries used:
+ *  Apache Commons Logging (Apache Software License v2.0)
+ *  Apache Log4j (Apache Software License v2.0)
+ *  Bean Shell (Sun Public License)
+ *  Concursive Commons (LGPL)
+ *  OpenCSV (Apache Software License v2.0)
+ */
+
+import au.com.bytecode.opencsv.CSVReader;
+import com.concursive.commons.api.APIConnection;
+import com.concursive.commons.api.DataRecord;
+import com.concursive.commons.phone.PhoneNumberUtils;
+import com.concursive.commons.text.StringUtils;
+import java.util.Date;
+
+// Check the command-line arguments
+if (bsh.args.length == 0) {
+  print("Usage:");
+  print("  importContractorsFromCSV [filename] <url> <code> <offset> <limit>");
+  print("");
+  print("The specified file will be sent to either 127.0.0.1 or the specified url");
+  print("");
+  print("At a minimum, fields are: name, description");
+  print("");
+  System.exit(0);
+}
+
+// Make sure the CSV file exists
+String filename = bsh.args[0].trim();
+File csvFile = new File(filename);
+if (!csvFile.exists()) {
+  print("File does not exist: " + filename);
+  System.exit(2);
+}
+
+// Determine the Concursive web site parameters
+String url = "http://127.0.0.1";
+String code = "";
+if (bsh.args.length > 1) {
+  url = bsh.args[1].trim();
+  code = bsh.args[2].trim();
+}
+
+// Determine record offset to use
+int skip = 0;
+if (bsh.args.length > 3) {
+  skip = Integer.parseInt(bsh.args[3].trim());
+  print("Skipping " + skip);
+}
+
+// Determine the max number of records to process
+int limit = 0;
+if (bsh.args.length > 4) {
+  limit = Integer.parseInt(bsh.args[4].trim());
+  print("Limit " + limit);
+}
+
+// Prepare the connection to the web site
+print("Starting transaction...");
+
+APIConnection conn = new APIConnection();
+conn.setUrl(url);
+conn.setClientId(1);
+conn.setCode(code);
+
+Map categoryNameIdMap = new HashMap();
+Map subCategory1NameIdMap = new HashMap();
+Map subCategory2NameIdMap = new HashMap();
+
+// Parse the CSV file
+System.out.println("Loading file... " + csvFile.toURL());
+CSVReader reader = new CSVReader(new FileReader(csvFile));
+String[] nextLine = reader.readNext();
+
+// Set a prefix for this data batch
+String sourceIdPrefix = "CIVICON15-";
+
+// Example header column from the CSV
+// Sakey,
+// AdSakey,
+// PermitNum,
+// Contractor,
+// IssuedDate,
+// PermitFee,
+// StatusCurrent,
+// WorkClass,
+// TotalCost,GeneralCost,ElectricalCost,ElecContractor,PlumbingCost,PlumbContractor,MechanicalCost,MechContractor,
+// OwnerDoingWork,
+// SepticTankNum,
+// Description,
+// SoilErosionFee,
+// HousingRecoveryFee,TypeConstructionDesc,Basement,NumBaths,NumUnits,NumRooms,NumStories,BuildingSqFt,OccupancyDesc,CancelDate,CensusTract,FloodPlain,Zoning,HistoricDistrict,
+// CancelReason,TempCOExpDate,FinalCO,FinalCODate,
+// StName,StType,StPrefix,StSfxDir,StNumber,StApt,OwnerName,OwnerName2,
+// MailCity,MailZip,PlanReviewNum,MultiFamily,LocalHistDistrict,AnnexDate,ContactPhone,Location 1,Location 2
+
+// Map the column names to a column index to use later
+int projectSourceIdColumn = -1;
+int projectNameColumn = -1;
+int projectDescriptionColumn = -1;
+int projectKeywordsColumn = -1;
+int projectAddressColumn = -1;
+int projectAddress2Column = -1;
+int projectCityColumn = -1;
+int projectStateColumn = -1;
+int projectZipColumn = -1;
+int projectLatitudeColumn = -1;
+int projectLongitudeColumn = -1;
+int projectPhoneColumn = -1;
+int projectFaxColumn = -1;
+int projectCategoryColumn = -1;
+int projectSubCategory1Column = -1;
+int projectSubCategory2Column = -1;
+int projectWebsiteColumn = -1;
+int projectSICColumn = -1;
+
+// Check the header columns
+for (int i = 0; i < nextLine.length; i++) {
+  if (nextLine[i].equalsIgnoreCase("NAME") ||
+      nextLine[i].equalsIgnoreCase("COMPANY_NAME") ||
+      nextLine[i].equalsIgnoreCase("Contractor") ||
+      nextLine[i].equalsIgnoreCase("COMPANY")) {
+    projectNameColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("ID") || nextLine[i].equalsIgnoreCase("PermitNum")) {
+    projectSourceIdColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("DESCRIPTION") || nextLine[i].equalsIgnoreCase("SHORT_DESCRIPTION")) {
+    projectDescriptionColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("KEYWORDS") || nextLine[i].equalsIgnoreCase("ServiceList")) {
+    projectKeywordsColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("LATITUDE") || nextLine[i].equalsIgnoreCase("LAT")) {
+    projectLatitudeColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("LONGITUDE") || nextLine[i].equalsIgnoreCase("LONG")) {
+    projectLongitudeColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("PHONE") || nextLine[i].equalsIgnoreCase("PRIMARY_PHONE")) {
+    projectPhoneColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("FAX") || nextLine[i].equalsIgnoreCase("PRIMARY_FAX")) {
+    projectFaxColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("ADDRESS") || nextLine[i].equalsIgnoreCase("ADDRESS 1") || nextLine[i].equalsIgnoreCase("Addr1")) {
+    projectAddressColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("ADDRESS2") || nextLine[i].equalsIgnoreCase("ADDRESS 2") || nextLine[i].equalsIgnoreCase("Addr2")) {
+    projectAddress2Column = i;
+  } else if (nextLine[i].equalsIgnoreCase("CITY") || nextLine[i].equalsIgnoreCase("PRIMARY_CITY")) {
+    projectCityColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("STATE") || nextLine[i].equalsIgnoreCase("PRIMARY_STATE")) {
+    projectStateColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("ZIP") ||
+      nextLine[i].equalsIgnoreCase("ZIPCODE") ||
+      nextLine[i].equalsIgnoreCase("ZIP_CODE") ||
+      nextLine[i].equalsIgnoreCase("ZIP CODE") ||
+      nextLine[i].equalsIgnoreCase("POSTAL_CODE") ||
+      nextLine[i].equalsIgnoreCase("POSTAL CODE") ||
+      nextLine[i].equalsIgnoreCase("PRIMARY_ZIP_CODE")) {
+    projectZipColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("CATEGORY") || nextLine[i].equalsIgnoreCase("PROJECT_CATEGORY")) {
+    projectCategoryColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("WorkClass") || nextLine[i].equalsIgnoreCase("SUB_CATEGORY1") || nextLine[i].equalsIgnoreCase("PROJECT_SUB_CATEGORY1")) {
+    projectSubCategory1Column = i;
+  } else if (nextLine[i].equalsIgnoreCase("SUB_CATEGORY2") || nextLine[i].equalsIgnoreCase("PROJECT_SUB_CATEGORY2")) {
+    projectSubCategory2Column = i;
+  } else if (nextLine[i].equalsIgnoreCase("WEB SITE") ||
+      nextLine[i].equalsIgnoreCase("Website") ||
+      nextLine[i].equalsIgnoreCase("WEB_SITE") ||
+      nextLine[i].equalsIgnoreCase("PROJECT_WEB_SITE")) {
+    projectWebsiteColumn = i;
+  } else if (nextLine[i].equalsIgnoreCase("SIC") || nextLine[i].equalsIgnoreCase("SIC Code")) {
+     projectSICColumn = i;
+  }
+}
+
+// Abort if there is no name column
+if (projectNameColumn == -1) {
+  throw new Exception("CSV columns not found ()");
+}
+
+// Keep an in-memory array of names to skip duplicates
+ArrayList businessNames = new ArrayList();
+
+conn.setAutoCommit(true);
+// get the "modifiedBy" user...
+int primeUserId = -1;
+{
+  //Add Meta Info with fields required
+  ArrayList meta = new ArrayList();
+  meta.add("id");
+  conn.setTransactionMeta(meta);
+
+  // Find the system user...
+  DataRecord record = new DataRecord();
+  record.setName("userList");
+  record.setAction(DataRecord.SELECT);
+  record.addField("userId", "1");
+  conn.save(record);
+
+  if (conn.hasError()) {
+    System.out.println("Commit error: " + conn.getErrorText());
+    System.exit(2);
+  }
+
+  if (conn.getRecordCount() == 0) {
+    System.out.println("Could not find a valid system user");
+    System.exit(2);
+  }
+
+  int foundValue = Integer.parseInt(conn.getResponseValue("id"));
+  primeUserId=foundValue;
+  System.out.println("Using userId: " + primeUserId);
+}
+
+// Insert the records
+int count = skip;
+while ((nextLine = reader.readNext()) != null &&
+       (limit == 0 || (limit != 0 && count < limit))) {
+  if (skip > 0) {
+    --skip;
+    continue;
+  }
+  
+  ++count;
+  if (count % 100 == 0) {
+    System.out.println(count + "...");
+  }
+
+  String projectNameValue = nextLine[projectNameColumn].trim();
+
+  String projectSourceIdValue = "";
+  if (projectSourceIdColumn != -1) {
+    projectSourceIdValue = sourceIdPrefix + nextLine[projectSourceIdColumn].trim();
+  }
+
+  if (projectSourceIdValue != null && projectSourceIdValue.length() > 20) {
+    System.out.println("Skipped. Data doesn't look good.");
+    continue;
+  }
+
+  String projectDescriptionValue = "";
+  if (projectDescriptionColumn != -1) {
+    projectDescriptionValue = nextLine[projectDescriptionColumn].trim();
+  }
+
+  String projectKeywordsValue = "";
+  if (projectKeywordsColumn != -1) {
+    projectKeywordsValue = nextLine[projectKeywordsColumn].trim();
+  }
+  String projectLatitudeValue = "";
+  if (projectLatitudeColumn != -1){
+    projectLatitudeValue = nextLine[projectLatitudeColumn].trim();
+  }
+
+  String projectLongitudeValue = "";
+  if (projectLongitudeColumn != -1) {
+    projectLongitudeValue = nextLine[projectLongitudeColumn].trim();
+  }
+
+  String projectPhoneValue = null;
+  if (projectPhoneColumn != -1) {
+    projectPhoneValue = nextLine[projectPhoneColumn].trim();
+  }
+
+  String projectFaxValue = null;
+  if (projectFaxColumn != -1) {
+    projectFaxValue = nextLine[projectFaxColumn].trim();
+  }
+
+  String projectAddressValue = null;
+  if (projectAddressColumn != -1) {
+    projectAddressValue = nextLine[projectAddressColumn].trim();
+  }
+
+  String projectAddress2Value = null;
+  if (projectAddress2Column != -1) {
+    projectAddress2Value = nextLine[projectAddress2Column].trim();
+  }
+
+  String projectCityValue = null;
+  if (projectCityColumn != -1) {
+    projectCityValue = nextLine[projectCityColumn].trim();
+  }
+
+  String projectStateValue = null;
+  if (projectStateColumn != -1) {
+    projectStateValue = nextLine[projectStateColumn].trim();
+    if (StringUtils.hasText(projectStateValue) && projectStateValue.length() == 2) {
+      projectStateValue = projectStateValue.toUpperCase();
+    }
+  }
+
+  String projectZipValue = null;
+  if (projectZipColumn != -1) {
+    projectZipValue = nextLine[projectZipColumn].trim();
+    if (projectZipValue.length() > 1) {
+      while (projectZipValue.length() < 5) {
+        projectZipValue = "0" + projectZipValue;
+      }
+    }
+  }
+
+  String projectWebsiteValue = null;
+  if (projectWebsiteColumn != -1) {
+    projectWebsiteValue = nextLine[projectWebsiteColumn].trim();
+  }
+
+  // normalizing website addresses
+  if (StringUtils.hasText(projectWebsiteValue)){
+    projectWebsiteValue = projectWebsiteValue.toLowerCase().trim();
+  }
+
+  // Fetching listing category (Businesses, Organizations, Groups, Events, etc.)
+  String projectCategoryValue = "Contractors";
+  if (projectCategoryColumn != -1) {
+    projectCategoryValue = nextLine[projectCategoryColumn].trim();
+  }
+
+  // Use the subcategory to further define the category
+  String projectSubCategory1Value = null;
+  if (projectSubCategory1Column != -1) {
+    projectSubCategory1Value = nextLine[projectSubCategory1Column].trim();
+  }
+
+  // Use the subcategory2 to further define the category, for now use as description
+  String projectSubCategory2Value = null;
+  if (projectSubCategory2Column != -1) {
+    projectSubCategory2Value = nextLine[projectSubCategory2Column].trim();
+  }
+
+  // Determine if a record with the name, lat, long, phone already exists
+  if (!"".equals(projectNameValue.trim())) {
+
+    if (businessNames.contains(projectNameValue)) {
+      continue;
+    }
+    businessNames.add(projectNameValue);
+
+    boolean exists = false;
+    long existingId = -1;
+    DataRecord partialProject = null;
+
+    conn.setAutoCommit(true);
+
+    // Look for a duplicate on the server before creating a new record
+    {
+      ArrayList meta = new ArrayList();
+      meta.add("id");
+      meta.add("title");
+      meta.add("latitude");
+      meta.add("longitude");
+      conn.setTransactionMeta(meta);
+
+      DataRecord record = new DataRecord();
+      record.setName("projectList");
+      record.setAction(DataRecord.SELECT);
+      // The criteria to match duplicates on...
+      record.addField("title", projectNameValue);
+      conn.save(record);
+
+      // In the meta section only a few properties were specified and will exist
+      ArrayList projectObjects = conn.getRecords();
+
+      System.out.println("Records: " + projectObjects.size());
+
+      for (Object projectObject : projectObjects) {
+        partialProject = (DataRecord) projectObject;
+        existingId = Long.parseLong(partialProject.getValue("id"));
+        break;
+      }
+    }
+
+    System.out.println("ExistingId? " + existingId + " [" + projectNameValue + "]");
+
+    // Handle top-level category
+    if (!StringUtils.hasText(projectCategoryValue)) {
+      print("A category must be specified for all records");
+      System.exit(2);
+    }
+
+	  // fetch id for the category value only if it has not been fetched already.
+	  int existingCategoryId = -1;
+    if (!categoryNameIdMap.containsKey(projectCategoryValue)) {
+      conn.setAutoCommit(true);
+      //Get project category id
+      ArrayList meta = new ArrayList();
+      meta.add("id");
+      meta.add("categoryName");
+      conn.setTransactionMeta(meta);
+
+      DataRecord record = new DataRecord();
+      record.setName("projectCategoryList");
+      record.setAction(DataRecord.SELECT);
+      // Set the filters to query by
+      record.addField("categoryName", projectCategoryValue);
+      record.addField("topLevelOnly", true);
+      conn.save(record);
+
+      if (conn.getRecordCount() == 0) {
+        print("Category does not exist: " + projectCategoryValue);
+        System.exit(2);
+      }
+
+      // In the meta section only a few properties were specified and will exist
+      ArrayList projectCategoryObjects = conn.getRecords();
+      for (Object projectCategoryObject : projectCategoryObjects) {
+        DataRecord partialProjectCategory = (DataRecord) projectCategoryObject;
+        existingCategoryId = partialProjectCategory.getValueAsInt("id");
+      }
+      categoryNameIdMap.put(projectCategoryValue, new Integer(existingCategoryId));
+      print("Cached: " + projectCategoryValue + " (" + existingCategoryId + ")");
+    }
+    existingCategoryId = ((Integer)categoryNameIdMap.get(projectCategoryValue)).intValue();
+
+    // Now that a valid parent category exists, get the subcategory id
+    int existingSubCategory1Id = -1;
+    if (StringUtils.hasText(projectSubCategory1Value)) {
+      if (!subCategory1NameIdMap.containsKey(existingCategoryId + projectSubCategory1Value)) {
+        conn.setAutoCommit(true);
+        //Get project category id
+        ArrayList meta = new ArrayList();
+        meta.add("id");
+        meta.add("categoryName");
+        conn.setTransactionMeta(meta);
+
+        DataRecord record = new DataRecord();
+        record.setName("projectCategoryList");
+        record.setAction(DataRecord.SELECT);
+        // Set the filters to query by
+        record.addField("parentCategoryId", existingCategoryId);
+        record.addField("categoryName", projectSubCategory1Value);
+
+        conn.save(record);
+
+        // In the meta section only a few properties were specified and will exist
+        ArrayList projectCategoryObjects = conn.getRecords();
+        for (Object projectCategoryObject : projectCategoryObjects) {
+          DataRecord partialProjectCategory = (DataRecord) projectCategoryObject;
+          existingSubCategory1Id = partialProjectCategory.getValueAsInt("id");
+        }
+        if (existingSubCategory1Id == -1) {
+          // Get the new id back
+          ArrayList meta = new ArrayList();
+          meta.add("id");
+          conn.setTransactionMeta(meta);
+          // Insert the new subcategory
+          DataRecord record = new DataRecord();
+          record.setName("projectCategory");
+          record.setAction(DataRecord.INSERT);
+          record.addField("parentCategoryId", existingCategoryId);
+          record.addField("description", projectSubCategory1Value);
+          record.addField("enabled", true);
+          record.addField("level", 10);
+          conn.save(record);
+          if (conn.hasError()) {
+            System.out.println("Commit error: " + conn.getErrorText());
+            System.exit(2);
+          }
+          existingSubCategory1Id = Integer.parseInt(conn.getResponseValue("id"));
+          print("  Cached: " + projectSubCategory1Value + " (" + existingSubCategory1Id + ")");
+        }
+        subCategory1NameIdMap.put(existingCategoryId + projectSubCategory1Value, new Integer(existingSubCategory1Id));
+      }
+      existingSubCategory1Id = ((Integer)subCategory1NameIdMap.get(existingCategoryId + projectSubCategory1Value)).intValue();
+    }
+
+    // Now that a valid parent category exists, get the subcategory id
+    int existingSubCategory2Id = -1;
+    if (StringUtils.hasText(projectSubCategory2Value)) {
+      if (!subCategory2NameIdMap.containsKey(existingCategoryId + projectSubCategory1Value + projectSubCategory2Value)) {
+        conn.setAutoCommit(true);
+        // Get project category id
+        ArrayList meta = new ArrayList();
+        meta.add("id");
+        meta.add("categoryName");
+        conn.setTransactionMeta(meta);
+
+        DataRecord record = new DataRecord();
+        record.setName("projectCategoryList");
+        record.setAction(DataRecord.SELECT);
+        // Set the filters to query by
+        record.addField("parentCategoryId", existingSubCategory1Id);
+        record.addField("categoryName", projectSubCategory2Value);
+
+        conn.save(record);
+
+        // In the meta section only a few properties were specified and will exist
+        ArrayList projectCategoryObjects = conn.getRecords();
+        for (Object projectCategoryObject : projectCategoryObjects) {
+          DataRecord partialProjectCategory = (DataRecord) projectCategoryObject;
+          existingSubCategory2Id = partialProjectCategory.getValueAsInt("id");
+        }
+        if (existingSubCategory2Id == -1) {
+          // Get the new id back
+          ArrayList meta = new ArrayList();
+          meta.add("id");
+          conn.setTransactionMeta(meta);
+          // Insert the new subcategory
+          DataRecord record = new DataRecord();
+          record.setName("projectCategory");
+          record.setAction(DataRecord.INSERT);
+          record.addField("parentCategoryId", existingSubCategory1Id);
+          record.addField("description", projectSubCategory2Value);
+          record.addField("enabled", true);
+          record.addField("level", 10);
+          conn.save(record);
+          if (conn.hasError()) {
+            System.out.println("Commit error: " + conn.getErrorText());
+            System.exit(2);
+          }
+          existingSubCategory2Id = Integer.parseInt(conn.getResponseValue("id"));
+          print("  Cached: " + projectSubCategory2Value + " (" + existingSubCategory2Id + ")");
+        }
+        subCategory2NameIdMap.put(existingCategoryId + projectSubCategory1Value + projectSubCategory2Value, new Integer(existingSubCategory2Id));
+      }
+      existingSubCategory2Id = ((Integer)subCategory2NameIdMap.get(existingCategoryId + projectSubCategory1Value + projectSubCategory2Value)).intValue();
+    }
+
+    // Update the existing server record with the latest data
+    if (existingId > -1) {
+      System.out.println("Updating record..." + count);
+      // Update project
+      DataRecord record = new DataRecord();
+      record.setName("project");
+      record.setAction(DataRecord.UPDATE);
+      record.addField("id", existingId);
+      record.addField("categoryId", existingCategoryId);
+      if (existingSubCategory1Id > -1) {
+        record.addField("subCategory1Id", existingSubCategory1Id);
+      }
+      record.addField("title", projectNameValue);
+      if (StringUtils.hasText(projectKeywordsValue)) {
+        record.addField("keywords", projectKeywordsValue);
+      }
+      if (StringUtils.hasText(projectDescriptionValue)) {
+        record.addField("shortDescription", projectDescriptionValue);
+      } else if (StringUtils.hasText(projectSubCategory2Value)) {
+        record.addField("shortDescription", projectSubCategory2Value);
+      } else {
+        record.addField("shortDescription", projectNameValue);
+      }
+      record.addField("addressLine1", projectAddressValue);
+      record.addField("addressLine2", projectAddress2Value);
+      record.addField("city", projectCityValue);
+      record.addField("state", projectStateValue);
+      record.addField("postalCode", projectZipValue);
+      record.addField("country", "UNITED STATES");
+      record.addField("latitude", projectLatitudeValue);
+      record.addField("longitude", projectLongitudeValue);
+      record.addField("businessPhone", projectPhoneValue);
+      record.addField("businessFax", projectFaxValue);
+      record.addField("enteredBy", primeUserId);
+      record.addField("modifiedBy", primeUserId);
+      record.addField("groupId", 1);
+      conn.save(record);
+    }
+
+    // Create a new server record
+    if (existingId == -1) {
+      System.out.println("Inserting record..." + count + " [" + projectNameValue + "] (" + projectSourceIdValue + ") " + "Sub1: " + existingSubCategory1Id);
+      conn.setAutoCommit(false);
+      {
+        // Insert a new project
+        DataRecord record = new DataRecord();
+        record.setName("project");
+        record.setAction(DataRecord.INSERT);
+        record.setShareKey(true);
+        record.addField("categoryId", existingCategoryId);
+        if (existingSubCategory1Id > -1) {
+          record.addField("subCategory1Id", existingSubCategory1Id);
+        }
+        if (existingSubCategory2Id > -1) {
+          record.addField("subCategory2Id", existingSubCategory2Id);
+        }
+        record.addField("title", projectNameValue);
+        if (StringUtils.hasText(projectKeywordsValue)) {
+          record.addField("keywords", projectKeywordsValue);
+        }
+        if (StringUtils.hasText(projectDescriptionValue)) {
+          record.addField("shortDescription", projectDescriptionValue);
+        } else if (StringUtils.hasText(projectSubCategory2Value)) {
+          record.addField("shortDescription", projectSubCategory2Value);
+        } else {
+          record.addField("shortDescription", projectNameValue);
+        }
+        record.addField("budgetCurrency", "USD");
+        if (StringUtils.hasText(projectSourceIdValue)) {
+          record.addField("source", projectSourceIdValue);
+        } else {
+          record.addField("source", "imported");
+        }
+        record.addField("approved", "true");
+        record.addField("addressLine1", projectAddressValue);
+        record.addField("addressLine2", projectAddress2Value);
+        record.addField("city", projectCityValue);
+        record.addField("state", projectStateValue);
+        record.addField("postalCode", projectZipValue);
+        record.addField("country", "UNITED STATES");
+        record.addField("latitude", projectLatitudeValue);
+        record.addField("longitude", projectLongitudeValue);
+        record.addField("businessPhone", projectPhoneValue);
+        record.addField("businessFax", projectFaxValue);
+        record.addField("enteredBy", primeUserId);
+        record.addField("modifiedBy", primeUserId);
+        record.addField("groupId", 1);
+        record.addField("webPage", projectWebsiteValue);
+
+        // Setting access preferences; GUESTS and PARTICIPANTS enabled
+        record.addField("updateAllowGuests", "true");
+        record.addField("allowGuests", "true");
+        record.addField("updateAllowParticipants", "true");
+        record.addField("allowParticipants", "true");
+        record.addField("updateMembershipRequired", "true");
+        record.addField("membershipRequired", "false");
+
+        // Features
+        record.addField("features.showProfile", "true");
+        record.addField("features.showBlog", "false");
+        record.addField("features.showWiki", "false");
+        record.addField("features.showDiscussion", "false");
+        record.addField("features.showCalendar", "false");
+        record.addField("features.showPhotos", "true");
+        record.addField("features.showReviews", "true");
+        record.addField("features.showAds", "false");
+        record.addField("features.showClassifieds", "false");
+        record.addField("features.showDocuments", "false");
+        record.addField("features.showLists", "false");
+        record.addField("features.showTeam", "true");
+        record.addField("features.showMessages", "false");
+        record.addField("features.showBadges", "false");
+        conn.save(record);
+      }
+
+      {
+        // Update the features
+        DataRecord record = new DataRecord();
+        record.setName("projectFeatures");
+        record.setAction(DataRecord.UPDATE);
+        record.addField("id", "$C{project.id}");
+
+        // Setting tab preferences (cannot be done with insert)
+        record.addField("labelBlog", "Blog");
+        record.addField("labelAds", "Promotions");
+        record.addField("labelClassifieds", "Classifieds");
+        record.addField("labelTeam", "Fans");
+        record.addField("labelLists", "Lists");
+        record.addField("labelDiscussion", "Discussion");
+        record.addField("labelDocuments", "Documents");
+        record.addField("labelCalendar", "Calendar");
+        record.addField("labelPhotos", "Photos");
+        record.addField("labelWiki", "About Us");
+        record.addField("labelReviews", "Reviews");
+        record.addField("modifiedBy", primeUserId);
+        record.addField("modified", new Date());
+
+        conn.save(record);
+      }
+      conn.commit();
+    }
+
+    if (conn.hasError()) {
+      System.out.println("Commit error: " + conn.getErrorText());
+      reader.close();
+      System.exit(2);
+    }
+  }
+}
+reader.close();
+System.exit(0);

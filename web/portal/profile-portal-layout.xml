@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Concursive CityOAC Configuration file
+  version:    1
+  date:       20151107
+  author:     Code for Greensboro #Civicon15 - Team DIW Greensboro
+-->
+<module>
+  <navigation>
+    <page name="project profile: contractors">
+      <row>
+        <column class="medium-7 ">
+          <row>
+            <column class="small-12">
+              <portlet name="ContentPortlet">
+                <content><![CDATA[<h3>From Greensboro Open Data...</h3>]]></content>
+              </portlet>
+            </column>
+          </row>
+          <row>
+            <column class="small-12 medium-6 ">
+              <portlet name="ContentPortlet">
+                <content><![CDATA[
+                  <h5>Count of Inspections By Year</h5>
+                  <iframe src="https://codeforgreensboro.opendatasoft.com/explore/embed/dataset/building_inspection_gso/?tab=analyze&refine.contractor=${project.title:html}&dataChart=eyJxdWVyaWVzIjpbeyJjb25maWciOnsiZGF0YXNldCI6ImJ1aWxkaW5nX2luc3BlY3Rpb25fZ3NvIiwib3B0aW9ucyI6eyJ0YWIiOiJhbmFseXplIiwicmVmaW5lLmNvbnRyYWN0b3IiOiJQT1JUUkFJVCBIT01FUyAtIE5DLCBMTEMifX0sImNoYXJ0cyI6W3sidHlwZSI6ImxpbmUiLCJmdW5jIjoiQ09VTlQiLCJ5QXhpcyI6InNha2V5IiwiY29sb3IiOiIjNjZjMmE1In1dLCJ4QXhpcyI6Imlzc3VlZGRhdGUiLCJtYXhwb2ludHMiOiIiLCJ0aW1lc2NhbGUiOiJ5ZWFyIiwic29ydCI6IiJ9XSwidGltZXNjYWxlIjoieWVhciJ9&static=false&datasetcard=false" width="250" height="250" frameborder="0"></iframe>
+              ]]></content>
+              </portlet>
+            </column>
+            <column class="small-12 medium-6 ">
+              <portlet name="ContentPortlet">
+                <content><![CDATA[
+                  <h5>Building Types By Vendor</h5>
+                  <iframe src="https://codeforgreensboro.opendatasoft.com/explore/embed/dataset/building_inspection_gso/?tab=analyze&refine.contractor=${project.title:html}&dataChart=eyJxdWVyaWVzIjpbeyJjb25maWciOnsiZGF0YXNldCI6ImJ1aWxkaW5nX2luc3BlY3Rpb25fZ3NvIiwib3B0aW9ucyI6eyJ0YWIiOiJhbmFseXplIiwicmVmaW5lLmNvbnRyYWN0b3IiOiJQT1JUUkFJVCBIT01FUyAtIE5DLCBMTEMifX0sImNoYXJ0cyI6W3sidHlwZSI6ImNvbHVtbiIsImZ1bmMiOiJDT1VOVCIsInlBeGlzIjoic2FrZXkiLCJjb2xvciI6IiM2NmMyYTUifV0sInhBeGlzIjoid29ya2NsYXNzIiwibWF4cG9pbnRzIjoiIiwidGltZXNjYWxlIjoiIiwic29ydCI6InNlcmllMS0xIn1dLCJ0aW1lc2NhbGUiOiIifQ%3D%3D&static=false&datasetcard=false" width="250" height="250" frameborder="0"></iframe>
+              ]]></content>
+              </portlet>
+            </column>
+          </row>
+          <row>
+            <column class="small-12 ">
+              <portlet name="ContentPortlet">
+                <content><![CDATA[
+                  <h5>Permit Data</h5>
+                  <a target="_blank" href="https://codeforgreensboro.opendatasoft.com/explore/embed/dataset/building_inspection_gso/?tab=table&refine.contractor=${project.title:html}&dataChart=eyJxdWVyaWVzIjpbeyJjb25maWciOnsiZGF0YXNldCI6ImJ1aWxkaW5nX2luc3BlY3Rpb25fZ3NvIiwib3B0aW9ucyI6eyJ0YWIiOiJhbmFseXplIiwicmVmaW5lLmNvbnRyYWN0b3IiOiJQT1JUUkFJVCBIT01FUyAtIE5DLCBMTEMifX0sImNoYXJ0cyI6W3sidHlwZSI6ImNvbHVtbiIsImZ1bmMiOiJDT1VOVCIsInlBeGlzIjoic2FrZXkiLCJjb2xvciI6IiM2NmMyYTUifV0sInhBeGlzIjoid29ya2NsYXNzIiwibWF4cG9pbnRzIjoiIiwidGltZXNjYWxlIjoiIiwic29ydCI6InNlcmllMS0xIn1dLCJ0aW1lc2NhbGUiOiIifQ%3D%3D&static=false&datasetcard=true">View full screen</a>
+                  <iframe src="https://codeforgreensboro.opendatasoft.com/explore/embed/dataset/building_inspection_gso/?tab=table&refine.contractor=${project.title:html}&dataChart=eyJxdWVyaWVzIjpbeyJjb25maWciOnsiZGF0YXNldCI6ImJ1aWxkaW5nX2luc3BlY3Rpb25fZ3NvIiwib3B0aW9ucyI6eyJ0YWIiOiJhbmFseXplIiwicmVmaW5lLmNvbnRyYWN0b3IiOiJQT1JUUkFJVCBIT01FUyAtIE5DLCBMTEMifX0sImNoYXJ0cyI6W3sidHlwZSI6ImNvbHVtbiIsImZ1bmMiOiJDT1VOVCIsInlBeGlzIjoic2FrZXkiLCJjb2xvciI6IiM2NmMyYTUifV0sInhBeGlzIjoid29ya2NsYXNzIiwibWF4cG9pbnRzIjoiIiwidGltZXNjYWxlIjoiIiwic29ydCI6InNlcmllMS0xIn1dLCJ0aW1lc2NhbGUiOiIifQ%3D%3D&static=false&datasetcard=false" width="540" height="450" frameborder="0"></iframe>
+              ]]></content>
+              </portlet>
+            </column>
+          </row>
+        </column>
+        <column class="medium-5 ">
+          <row>
+            <column class="small-6">
+              <!-- Fan Count -->
+              <portlet name="ProfileStatsPortlet" class="text-center panel radius">
+                <title>Fan</title>
+                <plural>Fans</plural>
+                <icon>thumbs-o-up</icon>
+                <type>profileUserCount</type>
+              </portlet>
+            </column>
+            <column class="small-6">
+              <!-- Become a Fan -->
+              <portlet name="ProjectActionsPortlet">
+                <style>links</style>
+                <urls>
+                  <value><![CDATA[
+                    <content>Become a Fan</content>
+                    <title>Join ${project.title:xml} as a fan</title>
+                    <href>/ProjectManagementTeam.do?command=ConfirmJoin&amp;pid=${project.id}&amp;type=fan</href>
+                    <class>button radius expand no-gap</class>
+                    <rel>shadowbox;width=600</rel>
+                    <rule>userCanJoin</rule>]]>
+                  </value>
+                  <value><![CDATA[
+                    <content>Become a Fan</content>
+                    <title>Request to join ${project.title:xml} as a member</title>
+                    <class>button radius expand no-gap</class>
+                    <href>/ProjectManagementTeam.do?command=ConfirmAskToBecomeMember&amp;pid=${project.id}</href>
+                    <rel>shadowbox;width=600</rel>
+                    <rule>userCanRequestToJoin</rule>]]>
+                  </value>
+                </urls>
+              </portlet>
+              <!-- Add a Review -->
+              <portlet name="ProjectActionsPortlet">
+                <style>links</style>
+                <urls>
+                  <value>
+                    <![CDATA[<content>Write a Review</content>
+              <title>Review ${project.title:xml}</title>
+              <icon>star-o</icon>
+              <class>button radius expand no-gap</class>
+              <href>/create/${project.uniqueId}/review?redirectTo=/show/${project.uniqueId}</href>
+              <rel>shadowbox;width=600</rel>
+              <permission>project-reviews-add</permission>
+              <rule>userCanReview</rule>]]>
+                  </value>
+                  <value>
+                    <![CDATA[<content>Write a Review</content>
+              <title>Review ${project.title:xml}</title>
+              <icon>star-o</icon>
+              <class>button radius expand</class>
+              <href>/page/registration-required</href>
+              <rel>shadowbox;width=600</rel>
+              <rule>isNotUser</rule>]]>
+                  </value>
+                </urls>
+              </portlet>
+            </column>
+          </row>
+          <row>
+            <column class="small-12 ">
+              <!-- Map -->
+              <portlet name="ProjectGoogleMapsPortlet" class="panel radius" />
+            </column>
+          </row>
+          <row>
+            <column class="small-12 ">
+              <!-- Reviews -->
+              <portlet name="RecentProjectReviewsPortlet">
+                <title>Reviews</title>
+                <icon>comments</icon>
+                <view>verbose</view>
+                <showIfEmpty>true</showIfEmpty>
+                <showAuthor>true</showAuthor>
+                <limit>5</limit>
+              </portlet>
+            </column>
+          </row>
+          <row>
+            <column class="small-12 ">
+              <!-- Photos -->
+              <portlet name="RecentPhotosListPortlet">
+                <title>Photos</title>
+                <icon>camera-retro</icon>
+                <limit>8</limit>
+                <showPhotoUpload>true</showPhotoUpload>
+                <emptyMessage>There are no photos yet.</emptyMessage>
+                <showMore>true</showMore>
+              </portlet>
+            </column>
+          </row>
+        </column>
+      </row>
+    </page>
+
+    <page name="form: contractors" showBanner="false">
+      <row>
+        <column class="small-12 main">
+          <portlet name="EditProjectByCategoryPortlet">
+            <failureMessage>Could not submit form. Please fix the errors and try again.</failureMessage>
+            <contractors>
+              <value>pageTitle=Contractor Information</value>
+              <value>title=Contractor Name</value>
+              <value>subCategory1=Category</value>
+              <value>addressLine1=Street Address</value>
+              <value>city=City</value>
+              <value>state=State/Province</value>
+              <value>postalCode=Zip/Postal Code</value>
+              <value>country=Country</value>
+              <value>businessPhone=Phone</value>
+              <value>businessFax=Fax</value>
+              <value>email1=Email</value>
+              <value>webPage=Website</value>
+              <value>facebookPage=Facebook URL</value>
+              <value>twitterId=Twitter Username</value>
+              <value>foursquareVenueId=Foursquare Venue Id</value>
+              <value>youtubeChannelId=YouTube.com URL or Channel Name</value>
+              <value>pinterestPage=Pinterest URL</value>
+              <value>tumblrPage=Tumblr URL</value>
+              <value>instagramPage=Instagram URL</value>
+              <value>flickrPage=Flickr URL</value>
+              <value>googlePlusPage=Google+ URL</value>
+              <value>ustreamId=Ustream.tv Live Embed Code</value>
+              <value>livestreamId=Livestream.com Username</value>
+              <value>appleIOSStoreUrl=Apple IOS App Store URL</value>
+              <value>appleIOSUrlScheme=Apple IOS App URL Scheme</value>
+              <value>googleAndroidStoreUrl=Google Android App Store URL</value>
+              <value>keywords=Keywords</value>
+              <value>shortDescription=Description</value>
+            </contractors>
+          </portlet>
+        </column>
+      </row>
+    </page>
+  </navigation>
+</module>

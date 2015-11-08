@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Concursive CityOAC Configuration file
+  version:    1
+  date:       20151107
+  author:     Code for Greensboro #Civicon15 - Team DIW Greensboro
+-->
+<dashboards>
+  <portal id="portal">
+
+    <page name="index.shtml">
+      <!-- logged out -->
+      <row type="subheader">
+        <column>
+          <row>
+            <column>
+              <portlet name="ContentPortlet" isUser="false">
+                <content><![CDATA[
+                  <div id="home-header-top" class="show-for-medium-up"></div>
+                  ]]>
+                </content>
+              </portlet>
+            </column>
+          </row>
+          <row id="home-header">
+            <column class="small-12 one">
+              <portlet name="ProjectAutoScrollerPortlet" class="widget-home-autoscroller-" isUser="false">
+                <project>${main-profile.uniqueId}</project>
+                <wiki>Site slideshow</wiki>
+                <width>990</width>
+                <contentIsBasedOnUser>true</contentIsBasedOnUser>
+              </portlet>
+            </column>
+          </row>
+          <row id="home-header-body">
+            <column>
+              <row class="row">
+                <column class="medium-7 columns">
+                  <portlet name="ProjectWikiContentPortlet" isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Home Content</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+                <column class="medium-5 columns">
+                  <portlet id="ccp-signup-portlet" name="SignupPortlet" class="panel radius" isUser="false">
+                    <title />
+                    <title>Join ${main-profile.title}</title>
+                    <message><![CDATA[${main-profile.shortDescription}]]></message>
+                    <button>Join Now</button>
+                    <!--<fields>nameFirst,nameLast,email</fields>-->
+                    <!--<fields>nameFirst,nameLast,address</fields>-->
+                    <!--<nextStep>verification</nextStep>-->
+                    <errorPage>/</errorPage>
+                    <showSignInLink>true</showSignInLink>
+                    <showSocialLogin>false</showSocialLogin>
+                    <!--<disclaimer>Your street address is used to verify your information and will be shown to others in your neighborhood.</disclaimer>-->
+                  </portlet>
+                </column>
+              </row>
+            </column>
+          </row>
+          <row>
+            <column>
+              <portlet name="ContentPortlet" isUser="false">
+                <content><![CDATA[
+                  <div id="home-header-bottom" class="show-for-medium-up"></div>
+                  ]]>
+                </content>
+              </portlet>
+            </column>
+          </row>
+          <row id="ccp-home-intro">
+            <column>
+              <row class="row">
+                <column class="small-12 columns ">
+                  <portlet name="ProjectWikiContentPortlet" isUser="false" class="text-center ">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Intro</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+              </row>
+            </column>
+          </row>
+          <row id="ccp-home-info">
+            <column>
+              <row id="ccp-home-info-row" class="row" data="data-equalizer">
+                <column class="medium-3 columns" data="data-equalizer-watch">
+                  <portlet name="ProjectWikiContentPortlet" class="text-center " isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Info 1</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+                <column class="medium-3 columns" data="data-equalizer-watch">
+                  <portlet name="ProjectWikiContentPortlet" class="text-center " isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Info 2</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+                <column class="medium-3 columns" data="data-equalizer-watch">
+                  <portlet name="ProjectWikiContentPortlet" class="text-center " isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Info 3</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+                <column class="medium-3 columns" data="data-equalizer-watch">
+                  <portlet name="ProjectWikiContentPortlet" class="text-center " isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Info 4</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+              </row>
+            </column>
+          </row>
+          <row id="ccp-home-benefits">
+            <column>
+              <row id="ccp-home-benefits-row" class="row">
+                <column class="medium-5 columns">
+                  <portlet name="ProjectWikiContentPortlet" isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Benefits Content</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+                <column class="medium-7 columns">
+                  <portlet name="ContentPortlet" isUser="false">
+                    <content><![CDATA[
+                      <h3>Building Inspections in Greensboro by Year</h3>
+                      <iframe src="https://codeforgreensboro.opendatasoft.com/map/embed/building_inspections_greensboro/?&static=false&datasetcard=false" width="600" height="450" frameborder="0"></iframe>
+              ]]></content>
+                  </portlet>
+                  <!--
+                  <portlet name="ProjectWikiContentPortlet" isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Benefits Slideshow</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                  -->
+                </column>
+              </row>
+            </column>
+          </row>
+          <row id="ccp-home-row-2blocks">
+            <column>
+              <row class="row">
+                <column class="medium-6 columns">
+                  <portlet name="ProjectWikiContentPortlet" id="ccp-home-row-2blocks-portlet-block1of2" class="panel callout radius text-center " isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Info 1 of 2</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+                <column class="medium-6 columns">
+                  <portlet name="ProjectWikiContentPortlet" id="ccp-home-row-2blocks-portlet-block2of2" class="panel callout radius text-center " isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Info 2 of 2</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+              </row>
+            </column>
+          </row>
+          <row id="ccp-home-footer">
+            <column>
+              <row class="row">
+                <column class="small-12 columns">
+                  <portlet name="ProjectWikiContentPortlet" class="text-center " isUser="false">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Footer</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+              </row>
+            </column>
+          </row>
+        </column>
+      </row>
+
+      <!-- logged in -->
+      <row type="subheader" id="dashboard-header-body">
+        <column>
+          <row>
+            <column>
+              <portlet name="ContentPortlet" isUser="true">
+                <content><![CDATA[
+                  <div id="dashboard-header-top" class="show-for-medium-up"></div>
+                  ]]>
+                </content>
+              </portlet>
+            </column>
+          </row>
+          <row>
+            <column>
+              <row class="row">
+                <column class="small-10 columns">
+                  <portlet name="ProjectWikiContentPortlet" isUser="true">
+                    <project>${main-profile.uniqueId}</project>
+                    <wiki>Site Home Centered</wiki>
+                    <showTitle>false</showTitle>
+                    <contentIsBasedOnUser>true</contentIsBasedOnUser>
+                  </portlet>
+                </column>
+              </row>
+            </column>
+          </row>
+          <row>
+            <column>
+              <portlet name="ContentPortlet" isUser="true">
+                <content><![CDATA[
+                  <div id="dashboard-header-bottom" class="show-for-medium-up"></div>
+                  ]]>
+                </content>
+              </portlet>
+            </column>
+          </row>
+        </column>
+      </row>
+      <row>
+        <column class="medium-6">
+          <portlet name="ProjectWikiContentPortlet" isUser="true">
+            <project>${main-profile.uniqueId}</project>
+            <wiki>DIW Contractors Title</wiki>
+            <showTitle>false</showTitle>
+            <contentIsBasedOnUser>true</contentIsBasedOnUser>
+          </portlet>
+          <portlet name="ProjectWikiContentPortlet" class="panel radius callout text-center " isUser="true">
+            <project>${main-profile.uniqueId}</project>
+            <wiki>DIW Contractors</wiki>
+            <showTitle>false</showTitle>
+            <contentIsBasedOnUser>true</contentIsBasedOnUser>
+          </portlet>
+        </column>
+        <column class="medium-6">
+          <portlet name="ProjectWikiContentPortlet" isUser="true">
+            <project>${main-profile.uniqueId}</project>
+            <wiki>DIW DIY Title</wiki>
+            <showTitle>false</showTitle>
+            <contentIsBasedOnUser>true</contentIsBasedOnUser>
+          </portlet>
+          <portlet name="ProjectWikiContentPortlet" class="panel radius callout text-center " isUser="true">
+            <project>${main-profile.uniqueId}</project>
+            <wiki>DIW DIY</wiki>
+            <showTitle>false</showTitle>
+            <contentIsBasedOnUser>true</contentIsBasedOnUser>
+          </portlet>
+        </column>
+      </row>
+    </page>
+
+
+    <page name="contractors.shtml" title="Contractors" description="" category="contractors">
+      <row>
+        <column width="auto" class="small-12">
+          <portlet name="ProjectAutoScrollerPortlet" class="widget-home-autoscroller-" isSensitive="true">
+            <project>${main-profile.uniqueId}</project>
+            <wiki>Contractors Announcement</wiki>
+            <width>990</width>
+            <contentIsBasedOnUser>true</contentIsBasedOnUser>
+          </portlet>
+        </column>
+      </row>
+      <row>
+        <column class="small-12">
+          <portlet name="ContentPortlet">
+            <content><![CDATA[<h3>Explore contractors...</h3>]]></content>
+          </portlet>
+        </column>
+      </row>
+      <row>
+        <column class="medium-3">
+          <portlet name="ProjectSubCategoryListByProjectCategoryPortlet" cache="60" class="panel ">
+            <!--<useAjax>true</useAjax>-->
+            <autoSetPageTitle>true</autoSetPageTitle>
+            <ulClass>side-nav</ulClass>
+            <liClass />
+            <liActive>true</liActive>
+            <category>Contractors</category>
+            <showSubcategories>true</showSubcategories>
+            <columns>1</columns>
+            <showIfEmpty>true</showIfEmpty>
+            <showAll>true</showAll>
+            <defaultFilter>-1</defaultFilter>
+            <subcategoryRequestParameter>subcategory</subcategoryRequestParameter>
+            <filterRequestParameter>filter</filterRequestParameter>
+            <allURL>/contractors.shtml?filter=${filter}</allURL>
+            <hasMoreURL>/contractors.shtml?category=${category}&amp;filter=${filter}&amp;subcategory=${subcategory}</hasMoreURL>
+            <portlet-events>
+              <generates-data>selectedCategory</generates-data>
+              <generates-data>selectedSubcategory</generates-data>
+              <generates-data>selectedFilter</generates-data>
+              <generates-request-data>requestGeneratedTitle</generates-request-data>
+            </portlet-events>
+          </portlet>
+        </column>
+        <column class="medium-5">
+          <!-- Filter -->
+          <portlet name="SearchFilterPortlet">
+            <title />
+            <prefix />
+            <showNearest>false</showNearest>
+            <labels>
+              <!--<value>near=Nearest</value>-->
+              <value>best=All</value>
+              <value>highest=Best</value>
+              <value>most_reviewed=Most Reviewed</value>
+              <value>newest=Newest</value>
+            </labels>
+            <url>/contractors.shtml?category=${category}&amp;filter=${filter}&amp;subcategory=${subcategory}</url>
+            <portlet-events>
+              <consumes-data>selectedFilter</consumes-data>
+              <consumes-data>selectedCategory</consumes-data>
+              <consumes-data>selectedSubcategory</consumes-data>
+            </portlet-events>
+          </portlet>
+          <portlet name="SearchResultsByProjectPortlet">
+            <category>Contractors</category>
+            <showSubcategory>true</showSubcategory>
+            <limit>30</limit>
+            <hasMoreURL />
+            <showIfEmpty>true</showIfEmpty>
+            <searchType>best</searchType>
+            <useUserLocation>false</useUserLocation>
+            <portlet-events>
+              <consumes-data>selectedFilter</consumes-data>
+              <consumes-data>selectedCategory</consumes-data>
+              <consumes-data>selectedSubcategory</consumes-data>
+            </portlet-events>
+          </portlet>
+        </column>
+        <column class="medium-4">
+          <row>
+            <column class="small-12 ">
+              <portlet name="SearchFormPortlet" class="plain">
+                <title>Search Contractors</title>
+                <category>Contractors</category>
+                <hasMoreURL>/page/lists/${category}</hasMoreURL>
+                <hasMoreTitle>View All</hasMoreTitle>
+                <showLocation>true</showLocation>
+              </portlet>
+              <portlet name="ActivityStreamPortlet" class="panel radius info activity-list ">
+                <content>Recent Activity</content>
+                <category>Contractors</category>
+                <showReplies>false</showReplies>
+                <allowReplies>false</allowReplies>
+                <viewType>summary</viewType>
+                <events>
+                  <!--<value>classified</value>-->
+                  <value>photo=2010820404</value>
+                  <!--<value>video=2011121606</value>-->
+                  <!--<value>profile=2009022601</value>-->
+                  <value>rating=2009022614</value>
+                  <!--<value>user-entry=2009033118</value>-->
+                  <!--<value>twitter=2009110514</value>-->
+                </events>
+                <limit>10</limit>
+                <showIfEmpty>true</showIfEmpty>
+              </portlet>
+            </column>
+          </row>
+        </column>
+      </row>
+    </page>
+
+    <page name="add_contractor.shtml" title="Add a Contractor"
+          description="Add a contractor"
+          category="contractors">
+      <row>
+        <column width="auto" class="medium-8 main">
+          <portlet name="ContentPortlet" isUser="false">
+            <content>
+              <![CDATA[<h3>Add a Contractor</h3>
+            <p>You must be signed in to add a contractor. <a href="${ctx}/login?redirectTo=/add_contractor.shtml">Click here to sign in</a></p>
+            <p>Don't have an account? <a href="${ctx}/register">We'll get you set up once you click here.</a></p>
+              ]]>
+            </content>
+          </portlet>
+          <portlet name="AddProjectByCategoryPortlet" isUser="true">
+            <category>Contractors</category>
+            <title>Add a Contractor</title>
+            <introductionMessage>Please search to see if the contractor already
+              exists before requesting for it to be added. Next, enter basic
+              information about the contractor. After completing this form, the
+              contractor record will need to be approved before it will be searchable
+              by others.
+            </introductionMessage>
+            <showSubCategories>true</showSubCategories>
+            <showIsOwner>true</showIsOwner>
+            <isOwnerMessage>By checking this box, you are verifying that you are affiliated with or employed by this business. You must check this box if you would like tools to manage, modify, or enhance your listing information.</isOwnerMessage>
+            <!--<addUserWithRole>Member</addUserWithRole>-->
+            <addOwnerUserWithRole>Manager</addOwnerUserWithRole>
+            <privacy>everyone</privacy>
+            <isApproved>true</isApproved>
+            <labels>
+              <value>title=Contractor Name</value>
+              <value>subcategory=This is primarily a...</value>
+            </labels>
+            <showLocationName>false</showLocationName>
+            <showAddress>true</showAddress>
+            <showContactInformation>true</showContactInformation>
+            <showShortDescription>true</showShortDescription>
+            <showKeywords>true</showKeywords>
+            <showWebsite>true</showWebsite>
+            <successMessage>
+              <![CDATA[This contractor record is now waiting for approval before it is available in the directory]]>
+            </successMessage>
+            <failureMessage>The information could not be saved.</failureMessage>
+            <modules>
+              <value>Profile</value>
+              <!--<value>News=Blog</value>-->
+              <value>Photos</value>
+              <!--<value>Videos</value>-->
+              <!--<value>Wiki</value>-->
+              <!--<value>Webcasts</value>-->
+              <!--<value>Discussion</value>-->
+              <!--<value>Documents</value>-->
+              <!--<value>Lists</value>-->
+              <value>Reviews</value>
+              <value>Team=Fans</value>
+            </modules>
+          </portlet>
+        </column>
+      </row>
+    </page>
+
+    <page name="diy.shtml" title="DIY - Do It Yourself" description="" category="diy">
+      <row>
+        <column width="auto" class="small-12">
+          <portlet name="ProjectAutoScrollerPortlet" class="widget-home-autoscroller-" isSensitive="true">
+            <project>${main-profile.uniqueId}</project>
+            <wiki>DIY Announcement</wiki>
+            <width>990</width>
+            <contentIsBasedOnUser>true</contentIsBasedOnUser>
+          </portlet>
+        </column>
+      </row>
+      <row>
+        <column class="small-12">
+          <portlet name="ContentPortlet">
+            <content><![CDATA[
+              <iframe src="https://codeforgreensboro.opendatasoft.com/page/gso_bi_finder/?headless=true" width="100%" height="1075" frameborder="0"></iframe>
+            ]]></content>
+          </portlet>
+        </column>
+      </row>
+    </page>
+
+  </portal>
+</dashboards>
