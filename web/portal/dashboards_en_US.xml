@@ -261,6 +261,16 @@
           </portlet>
         </column>
       </row>
+      <row>
+        <column class="small-12">
+          <portlet name="ContentPortlet" isUser="true">
+            <content><![CDATA[
+                      <h3>Building Inspections in Greensboro by Year</h3>
+                      <iframe src="https://codeforgreensboro.opendatasoft.com/map/embed/building_inspections_greensboro/?&static=false&datasetcard=false" width="100%" height="600" frameborder="0"></iframe>
+              ]]></content>
+          </portlet>
+        </column>
+      </row>
     </page>
 
 
