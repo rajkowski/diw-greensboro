@@ -1,0 +1,74 @@
+<!-- Code for the Permit Finder App on the OpenDataSoft brigade open data portal.
+
+    Code is HTML and uses several OpenDataSoft Angular JS Widgets
+
+    People will need an account on the Greensboro OpenDataSoft brigade open data portal:
+        https://codeforgreensboro.opendatasoft.com
+
+        Contact the brigade captains at Code for Greensboro for an account
+            Nick Jones <nick@codeforgreensboro.org>
+            Anita Cafiero <anita@codeforgreensboro.org>
+            Jason Marshall <jason.marshall@greensboro-nc.gov>
+
+    Users will need Administrator access control "The user may create and edit content pages on the domain" to be able to edit the page and to create other pages.
+
+    Find page at https://codeforgreensboro.opendatasoft.com/page/gso_bi_finder
+
+Source information for OpenDataSoft open source Angular JS Widgets:
+    https://opendatasoft.github.io/ods-widgets/docs/#/api
+
+On-line documentation for OpenDataSoft functionality:
+    http://docs.opendatasoft.com/
+
+Contact at OpenDataSoft for any additional questions about the OpenDataSoft brigade open data portal:
+    Ian Henshaw <ian.henshaw@opendatasoft.com>
+
+CSS code for page
+    body { 
+        background: #283944; 
+    }
+    .search {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        padding-left: 10px;
+    }
+
+-->
+
+<h1>
+    Greensboro Building Permit Finder App      
+</h1>
+
+<div class="whitebox">
+    <ods-dataset-context context="buildinginspectiongso"
+                         buildinginspectiongso-domain="codeforgreensboro.opendatasoft.com"
+                         buildinginspectiongso-dataset="building_inspection_gso"
+                         buildinginspectiongso-parameters="{'refine.contractor':'BY OWNER'}">
+            <div class="map">
+                <ods-map location="13,36.10022,-79.80831">
+                    <ods-map-layer context="buildinginspectiongso"></ods-map-layer>
+                </ods-map>                    
+            </div>
+            <div class="search">
+                <h2>
+                    Type in some sort of improvement you would like to make (ie. kitchen)
+                </h2>
+             <ods-text-search context="buildinginspectiongso"></ods-text-search>
+            </div>
+            <div class="table">
+                <ods-table context="buildinginspectiongso"></ods-table>
+            </div>
+    </ods-dataset-context>
+</div>
+
+<div class="whitebox">
+    <h2>
+        Top 10 Contractors Since 2005
+    </h2>
+        <ods-dataset-context  context="buildinginspectiongso2" buildinginspectiongso2-dataset="building_inspection_gso" buildinginspectiongso2-parameters="{'sort':'issueddate','q':'(issueddate &gt;= 2005) AND (contractor NOT &quot;BY OWNER&quot;)'}"><ods-chart>
+        <ods-chart-query context="buildinginspectiongso2" field-x="contractor" maxpoints="10" sort="serie1-1">
+            <ods-chart-serie expression-y="permitnum" chart-type="bar" function-y="COUNT" color="#66c2a5">
+            </ods-chart-serie>
+        </ods-chart-query>
+        </ods-chart></ods-dataset-context>
+</div>
