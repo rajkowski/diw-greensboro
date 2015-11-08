@@ -453,7 +453,29 @@
         <column class="small-12">
           <portlet name="ContentPortlet">
             <content><![CDATA[
-              <iframe src="https://codeforgreensboro.opendatasoft.com/page/gso_bi_finder/?headless=true" width="100%" height="1075" frameborder="0"></iframe>
+              <iframe src="https://codeforgreensboro.opendatasoft.com/page/gso_bi_finder/?headless=true" width="100%" height="1600" frameborder="0"></iframe>
+            ]]></content>
+          </portlet>
+        </column>
+      </row>
+    </page>
+
+    <page name="diw_projects.shtml" title="Latest Projects" description="" category="diw_projects">
+      <row>
+        <column width="auto" class="small-12">
+          <portlet name="ProjectAutoScrollerPortlet" class="widget-home-autoscroller-" isSensitive="true">
+            <project>${main-profile.uniqueId}</project>
+            <wiki>DIW Project Announcement</wiki>
+            <width>990</width>
+            <contentIsBasedOnUser>true</contentIsBasedOnUser>
+          </portlet>
+        </column>
+      </row>
+      <row>
+        <column class="small-12">
+          <portlet name="ContentPortlet">
+            <content><![CDATA[
+              <iframe src="https://codeforgreensboro.opendatasoft.com/page/bi_activity/?headless=true" width="100%" height="1075" frameborder="0"></iframe>
             ]]></content>
           </portlet>
         </column>
