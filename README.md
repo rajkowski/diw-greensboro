@@ -6,7 +6,7 @@ You can search for contractors, rate them, share project photos and see decades 
 The DIW Greensboro project combines Building Inspection Permits datasets from Greensboro Open Data with data visualization tools from OpenDataSoft, to provide an online community powered by Concursive's Open City Platform.
 
 The demo site was built in 2 days at Code for Greensboro • Civicon 2015 and the effort received 3rd place.
-The finished demo is available at https://greensboro.onsocialcloud.com
+The finished demo is available at https://greensboro.onconcursive.com
 
 Thanks to everyone involved who made this a fun and challenging event!
 
